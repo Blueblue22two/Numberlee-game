@@ -17,10 +17,10 @@ public class NumberleView implements Observer {
     private final JFrame frame = new JFrame("Numberle");
     // text filed
     private final JTextField inputTextField = new JTextField(3);
-    // 显示剩余尝试次数的标签
+    // label of remaining attempts
     private final JLabel attemptsLabel = new JLabel("Attempts remaining: ");
 
-    // 构造函数，初始化视图组件并设置游戏
+    // 初始化视图组件并设置游戏
     public NumberleView(INumberleModel model, NumberleController controller) {
         this.controller = controller;
         this.model = model;
@@ -28,7 +28,6 @@ public class NumberleView implements Observer {
 
         // 将当前视图作为观察者添加到模型中，以便接收游戏状态更新
         ((NumberleModel)this.model).addObserver(this);
-        // 初始化窗口组件
         initializeFrame();
         // 将视图设置到控制器中，以便在需要时更新视图
         this.controller.setView(this);
@@ -38,85 +37,132 @@ public class NumberleView implements Observer {
 
     // 初始化主窗口和所有子组件
     public void initializeFrame() {
-        // 设置窗口关闭时退出程序
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // 设置窗口大小
-        frame.setSize(600, 200);
+        frame.setSize(600, 350);
         frame.setLayout(new BorderLayout());
+        frame.getContentPane().setBackground(Color.WHITE);
 
-        // 创建中心面板，用于放置输入字段和提交按钮
-        JPanel center = new JPanel();
-        center.setLayout(new BoxLayout(center, BoxLayout.X_AXIS));
-        center.add(new JPanel());
-
-        // 输入面板，放置输入文本字段和提交按钮
+        // 输入和提交面板
         JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(3, 1));
+        inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        inputPanel.setBackground(Color.WHITE);
+
+        JLabel instructionLabel = new JLabel("Enter your equation:");
+        instructionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        inputPanel.add(instructionLabel);
+
+        inputTextField.setMaximumSize(new Dimension(200, 30));
+        inputTextField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        inputPanel.add(Box.createVerticalStrut(5));
         inputPanel.add(inputTextField);
 
-        // 提交按钮，用于提交用户猜测的方程
+        // submit button
         JButton submitButton = new JButton("Submit");
+        submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        submitButton.setBackground(new Color(118, 159, 205));
+        submitButton.setForeground(Color.WHITE);
+        submitButton.setFont(new Font("Arial", Font.BOLD, 14));
+
+        // hover
+        submitButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                submitButton.setBackground(Color.WHITE);
+                submitButton.setForeground(new Color(118, 159, 205));
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                submitButton.setBackground(new Color(118, 159, 205));
+                submitButton.setForeground(Color.WHITE);
+            }
+        });
+        // action listener
         submitButton.addActionListener(e -> {
-            // 当按钮被点击时，将输入文本发送到控制器处理
             controller.processInput(inputTextField.getText());
-            // 清空输入字段，准备下一次输入
             inputTextField.setText("");
         });
+        inputPanel.add(Box.createVerticalStrut(10));
         inputPanel.add(submitButton);
 
-        // 设置剩余尝试次数的标签
+        // label of remaining
         attemptsLabel.setText("Attempts remaining: " + controller.getRemainingAttempts());
+        attemptsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        inputPanel.add(Box.createVerticalStrut(10));
         inputPanel.add(attemptsLabel);
-        center.add(inputPanel);
-        center.add(new JPanel());
-        frame.add(center, BorderLayout.NORTH);
+        frame.add(inputPanel, BorderLayout.NORTH);
 
-        // 键盘面板，包含数字按钮，用于快速输入
-        JPanel keyboardPanel = new JPanel();
-        keyboardPanel.setLayout(new BoxLayout(keyboardPanel, BoxLayout.X_AXIS));
-        keyboardPanel.add(new JPanel());
+        // Keyboard panel
         JPanel numberPanel = new JPanel();
-        numberPanel.setLayout(new GridLayout(2, 5));
-        keyboardPanel.add(numberPanel);
+        GridLayout numberLayout = new GridLayout(2, 5, 5, 5);
+        numberPanel.setLayout(numberLayout);
+        numberPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // 添加外边距
+        numberPanel.setBackground(Color.WHITE);
 
-        // 为数字0-9添加按钮，方便用户输入
         for (int i = 0; i < 10; i++) {
             JButton button = new JButton(Integer.toString(i));
+            button.setBackground(new Color(247, 251, 252));
+            button.setForeground(Color.gray);
+            button.setFont(new Font("Arial", Font.BOLD, 14));
             button.addActionListener(e -> {
-                // 当数字按钮被点击时，将数字添加到输入字段
                 inputTextField.setText(inputTextField.getText() + button.getText());
             });
-            button.setPreferredSize(new Dimension(50, 50));
+            button.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    button.setBackground(new Color(214, 230, 242));
+                }
+
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    button.setBackground(new Color(247, 251, 252));
+                }
+            });
             numberPanel.add(button);
         }
 
-        // 添加运算符面板，包含运算符按钮
+        // Operator panel
         JPanel operatorPanel = new JPanel();
-        operatorPanel.setLayout(new GridLayout(1, 5)); // 一行五列的格局用于容纳五个运算符
-        // 定义运算符数组
+        GridLayout operatorLayout = new GridLayout(1, 5, 5, 5);
+        operatorPanel.setLayout(operatorLayout);
+        operatorPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        operatorPanel.setBackground(Color.WHITE);
+
         String[] operators = {"+", "-", "*", "/", "="};
-        // 循环添加运算符按钮
         for (String op : operators) {
             JButton operatorButton = new JButton(op);
+            operatorButton.setBackground(new Color(247, 251, 252));
+            operatorButton.setForeground(Color.gray);
+            operatorButton.setFont(new Font("Arial", Font.BOLD, 14));
             operatorButton.addActionListener(e -> {
-                // 当运算符按钮被点击时，将运算符添加到输入字段
                 inputTextField.setText(inputTextField.getText() + operatorButton.getText());
             });
-            operatorButton.setPreferredSize(new Dimension(50, 50)); // 设置按钮的大小
+            operatorButton.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    operatorButton.setBackground(new Color(214, 230, 242));
+                }
+
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    operatorButton.setBackground(new Color(247, 251, 252));
+                }
+            });
             operatorPanel.add(operatorButton);
         }
-        // 将运算符面板添加到键盘面板中
+
+        // 主键盘面板，包含数字和运算符面板
+        JPanel keyboardPanel = new JPanel();
+        keyboardPanel.setLayout(new BoxLayout(keyboardPanel, BoxLayout.Y_AXIS));
+        keyboardPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        keyboardPanel.setBackground(Color.WHITE);
+        keyboardPanel.add(numberPanel);
+        keyboardPanel.add(Box.createVerticalStrut(10));
+
+        // 使用分隔线
+        JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
+        separator.setPreferredSize(new Dimension(0, 2));
+        separator.setBackground(Color.BLACK);
+        keyboardPanel.add(separator);
+        keyboardPanel.add(Box.createVerticalStrut(10));
         keyboardPanel.add(operatorPanel);
 
-        // 添加布局间隙的空白面板以保持界面整洁
-        keyboardPanel.add(new JPanel());
-
         frame.add(keyboardPanel, BorderLayout.CENTER);
-
-        keyboardPanel.add(new JPanel());
-
-        frame.add(keyboardPanel, BorderLayout.CENTER);
-        // 使窗口可见
         frame.setVisible(true);
     }
 
@@ -134,8 +180,10 @@ public class NumberleView implements Observer {
         }
     }
 
-    public void updateViewWithMatchResults(String input) {
-        // 实现检查每个字符的匹配状态并更新键盘的逻辑
+    // 根据每个字符的匹配状态并更新键盘的逻辑
+    public void updateViewWithMatchResults(int[] matchResults) {
+        // todo:先获取当前的输入，然后按照情况修改keyboard中的按钮的状态
+        //  然后修改输入框中公式的状态
     }
 
     public void displayError(String message) {

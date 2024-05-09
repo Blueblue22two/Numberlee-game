@@ -29,10 +29,10 @@ public class NumberleModel extends Observable implements INumberleModel {
             assert lines.size() == 108 : "File should contain 108 lines, but actually contains " + lines.size() + " lines.";
 
             // Randomly select one equation
-            assert !lines.isEmpty() : "File is empty, unable to select an equation.";
             Random rand = new Random();
             targetNumber = lines.get(rand.nextInt(lines.size()));
-
+            assert !targetNumber.isEmpty() : "Target equation is empty, unable to select an equation.";
+            System.out.println("Target Number:"+targetNumber);
         } catch (IOException e) {
             // Handle possible I/O errors here
             System.err.println("Error reading from equations.txt file: " + e.getMessage());
@@ -67,41 +67,40 @@ public class NumberleModel extends Observable implements INumberleModel {
 
     @Override
     // 检测input与target字符的匹配情况，并返回记录匹配情况的数组
+    // TODO:检测如果当前字符与target对应的字符相等，则将其在res数组中数值设置为0
+    //  若检测到该字符在target中存在一样的字符，但是字符所在位置不同，则res数组中设置为1
+    //  若该字符在target字符中不存在，则res数组中数值设置为2
     public int[] matchInput(char[] inputChars){
         assert inputChars != null : "Input characters must not be null";
         int[] result = new int[7];
         String target = getTargetNumber();
         char[] targetChars = target.toCharArray();
-        boolean[] matched = new boolean[7]; // 跟踪已经完全匹配的字符
-        boolean[] counted = new boolean[7]; // 跟踪已经部分匹配的字符
+        // 用于标记target中的字符是否已匹配，防止重复匹配
+        boolean[] matched = new boolean[targetChars.length];
 
-        // step1：检查完全匹配
         for (int i = 0; i < inputChars.length; i++) {
-            if (inputChars[i] == targetChars[i]) {
-                result[i] = 0; // 完全匹配（绿色）
-                matched[i] = true; // 标记已完全匹配（匹配成功）
-                counted[i] = true; // 标记为已计算过(已完全匹配和部分匹配)
-            } else {
-                result[i] = 2; // 假设不匹配（灰色）
-            }
-        }
-
-        // step2：检查部分匹配
-        for (int i = 0; i < inputChars.length; i++) {
-            if (result[i] == 0) {
-                continue; // 跳过已完全匹配的字符
-            }
-
+            char inputChar = inputChars[i];
+            boolean isMatched = false;
+            // 检查当前字符与target中的每个字符是否相等
             for (int j = 0; j < targetChars.length; j++) {
-                // 如果该字符没被完全匹配（可能是部分匹配或者不匹配），并且也没被count
-                if (!matched[j] && !counted[j] && inputChars[i] == targetChars[j]) {
-                    result[i] = 1; // 部分匹配（橙色）
-                    counted[j] = true; // 标记为已计算过
-                    break;
+                if (inputChar == targetChars[j]) {
+                    if (i == j) {
+                        result[i] = 0; // 完全匹配，则标记已匹配
+                        matched[j] = true;
+                        isMatched = true;
+                        break;
+                    } else if (!matched[j]) {
+                        result[i] = 1; // 字符存在，但位置不同
+                        matched[j] = true; // 标记为已匹配
+                        isMatched = true;
+                    }
                 }
             }
+            // 如果字符在target中完全不存在
+            if (!isMatched) {
+                result[i] = 2;
+            }
         }
-
         return result;
     }
 

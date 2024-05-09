@@ -52,12 +52,11 @@ public class NumberleController {
         if (model.processInput(input)) {
             view.showGameEndMessage();
         } else {
-            // 若返回false，则接受matchInput
-            //  0表示绿色（匹配准确），1表示橙色（目标字符串中存在该字符，但是位置不对），2表示灰色（目标字符串中不存在该字符）
-            //  将结果显示到view中展示，将输入的字符串中每个字符显示为对应的颜色
-            //  同时将返回的为灰色的字符，在键盘中标为灰色并禁止使用
             char[] inputChars = input.toCharArray();
             int[] matchResults = model.matchInput(inputChars);
+            assert matchResults != null : "matchResults is null";
+            // 调用view的函数 updateViewWithMatchResults
+            view.updateViewWithMatchResults(matchResults);
         }
 
     }
