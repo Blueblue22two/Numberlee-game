@@ -17,6 +17,8 @@ public class NumberleController {
 
     public void processInput(String input) {
         // todo:注意，这些validation后keyboard中仍然要保留原来输入的字符
+        assert !input.isEmpty():"input is empty";
+        System.out.println("input:"+input);
         // validation
         if(!input.isEmpty()){view.displayError("!input.isEmpty()");}
 
@@ -56,7 +58,7 @@ public class NumberleController {
             int[] matchResults = model.matchInput(inputChars);
             assert matchResults != null : "matchResults is null";
             // 调用view的函数 updateViewWithMatchResults
-            view.updateViewWithMatchResults(matchResults);
+            view.updateViewWithMatchResults(matchResults, model.getCurrentGuess());
         }
 
     }

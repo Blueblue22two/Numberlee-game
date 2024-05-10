@@ -2,6 +2,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.Observer;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 /*
 * 只关心如何呈现controller传递的数据
 *
@@ -70,7 +72,6 @@ public class NumberleView implements Observer {
                 submitButton.setBackground(Color.WHITE);
                 submitButton.setForeground(new Color(118, 159, 205));
             }
-
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 submitButton.setBackground(new Color(118, 159, 205));
                 submitButton.setForeground(Color.WHITE);
@@ -125,22 +126,17 @@ public class NumberleView implements Observer {
         operatorPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         operatorPanel.setBackground(Color.WHITE);
 
-        String[] operators = {"+", "-", "*", "/", "="};
+        String[] operators = {"+", "-", "*", "/", "=", "Del"};
         for (String op : operators) {
             JButton operatorButton = new JButton(op);
             operatorButton.setBackground(new Color(247, 251, 252));
             operatorButton.setForeground(Color.gray);
             operatorButton.setFont(new Font("Arial", Font.BOLD, 14));
             operatorButton.addActionListener(e -> {
-                inputTextField.setText(inputTextField.getText() + operatorButton.getText());
-            });
-            operatorButton.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    operatorButton.setBackground(new Color(214, 230, 242));
-                }
-
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    operatorButton.setBackground(new Color(247, 251, 252));
+                if ("Del".equals(op) && inputTextField.getText().length() > 0) {
+                    inputTextField.setText(inputTextField.getText().substring(0, inputTextField.getText().length() - 1));
+                } else if (!"Del".equals(op)) {
+                    inputTextField.setText(inputTextField.getText() + operatorButton.getText());
                 }
             });
             operatorPanel.add(operatorButton);
@@ -180,8 +176,16 @@ public class NumberleView implements Observer {
         }
     }
 
+    // 新的方法，用于在指定行更新网格中的字符
+    public void updateGridRow(int row, StringBuilder currentGuess) {
+        if (row < 0 || row >= 6) return; // 确保行索引有效
+        for (int i = 0; i < 7; i++) {
+            gridLabels[row][i].setText(String.valueOf(currentGuess.charAt(i)));
+        }
+    }
+
     // 根据每个字符的匹配状态并更新键盘的逻辑
-    public void updateViewWithMatchResults(int[] matchResults) {
+    public void updateViewWithMatchResults(int[] matchResults, StringBuilder currentGuess) {
         // todo:先获取当前的输入，然后按照情况修改keyboard中的按钮的状态
         //  然后修改输入框中公式的状态
     }

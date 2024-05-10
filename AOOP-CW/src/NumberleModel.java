@@ -1,4 +1,5 @@
 // NumberleModel.java
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Random;
 import java.util.Observable;
@@ -17,15 +18,16 @@ import java.util.*;
 
 public class NumberleModel extends Observable implements INumberleModel {
     private String targetNumber;
-    private StringBuilder currentGuess; // 记录用户当前猜测准确的进度，可能在view中使用
+    private StringBuilder currentGuess;
     private int remainingAttempts;
     private boolean gameWon;
 
     @Override
     public void initialize() {
+        System.out.println("Current working directory: " + System.getProperty("user.dir"));
         try {
             // Load all equations from the file into a list
-            List<String> lines = Files.readAllLines(Paths.get("equations.txt"));
+            List<String> lines = Files.readAllLines(Paths.get(System.getProperty("user.dir"), "src/equations.txt"), StandardCharsets.UTF_8);
             assert lines.size() == 108 : "File should contain 108 lines, but actually contains " + lines.size() + " lines.";
 
             // Randomly select one equation
@@ -36,7 +38,8 @@ public class NumberleModel extends Observable implements INumberleModel {
         } catch (IOException e) {
             // Handle possible I/O errors here
             System.err.println("Error reading from equations.txt file: " + e.getMessage());
-            targetNumber = "7-2*3=1"; // Default
+            e.printStackTrace();
+            String targetNumber = "7-2*3=1"; // Default value in case of error
         } catch (AssertionError e) {
             System.err.println("Assertion failed: " + e.getMessage());
             targetNumber = "7-2*3=1"; // Default fallback equation
