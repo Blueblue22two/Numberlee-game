@@ -24,7 +24,6 @@ public class NumberleModel extends Observable implements INumberleModel {
 
     @Override
     public void initialize() {
-        System.out.println("Current working directory: " + System.getProperty("user.dir"));
         try {
             // Load all equations from the file into a list
             List<String> lines = Files.readAllLines(Paths.get(System.getProperty("user.dir"), "src/equations.txt"), StandardCharsets.UTF_8);
@@ -53,12 +52,17 @@ public class NumberleModel extends Observable implements INumberleModel {
     }
 
     @Override
-    // 检查input与目标等式是否相等，返回检查结果
+    // Check whether the input is equal to the target number
     public boolean processInput(String input) {
         assert getRemainingAttempts() > 0 : "No remaining attempts left";
-        if (getRemainingAttempts()>0){
+        assert !input.isEmpty() : "Input string cannot be null";
+        assert input.length() == 7 : "Input string must be exactly 7 characters long";
+        if (getRemainingAttempts()>1){
+            currentGuess = new StringBuilder(input);
             remainingAttempts-=1;
-            // 验证input 与 TargetNumber是否相等，相等则返回true,不相等则返回false
+            // notify
+            setChanged();
+            notifyObservers();
             String target = getTargetNumber();
             if(target.equals(input)){
                 gameWon=true;
@@ -70,7 +74,7 @@ public class NumberleModel extends Observable implements INumberleModel {
 
     @Override
     // 检测input与target字符的匹配情况，并返回记录匹配情况的数组
-    // TODO:检测如果当前字符与target对应的字符相等，则将其在res数组中数值设置为0
+    // 检测如果当前字符与target对应的字符相等，则将其在res数组中数值设置为0
     //  若检测到该字符在target中存在一样的字符，但是字符所在位置不同，则res数组中设置为1
     //  若该字符在target字符中不存在，则res数组中数值设置为2
     public int[] matchInput(char[] inputChars){
@@ -99,7 +103,7 @@ public class NumberleModel extends Observable implements INumberleModel {
                     }
                 }
             }
-            // 如果字符在target中完全不存在
+            // 字符在target中完全不存在
             if (!isMatched) {
                 result[i] = 2;
             }

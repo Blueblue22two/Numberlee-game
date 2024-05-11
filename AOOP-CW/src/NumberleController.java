@@ -16,11 +16,14 @@ public class NumberleController {
     }
 
     public void processInput(String input) {
-        // todo:注意，这些validation后keyboard中仍然要保留原来输入的字符
-        assert !input.isEmpty():"input is empty";
+        assert input != null : "Input string cannot be null";
+        assert input.length() == 7 : "Input string must be exactly 7 characters long";
         System.out.println("input:"+input);
         // validation
-        if(!input.isEmpty()){view.displayError("!input.isEmpty()");}
+        if (input.isEmpty()) {
+            view.displayError("Input cannot be empty");
+            return;
+        }
 
         if (!input.matches("^[0-9+-/*=()]*$") || input.length() != 7) {
             view.displayError("The Equation is invalid。");
@@ -44,8 +47,10 @@ public class NumberleController {
         // 处理等式左边的表达式
         int leftResult = evaluateExpression(parts[0].trim());
         // 将等式右边转换为整数
-        int rightResult = Integer.parseInt(parts[1].trim());
+        int rightResult = evaluateExpression(parts[1].trim());
         // 检查等式两边是否相等
+        System.out.println("left side="+parts[0].trim());
+        System.out.println("right side="+parts[1].trim());
         if (leftResult != rightResult) {
             view.displayError("The left side is not equal to right side.");
             return;
@@ -54,11 +59,15 @@ public class NumberleController {
         if (model.processInput(input)) {
             view.showGameEndMessage();
         } else {
+            if (getRemainingAttempts() <= 0) {
+                view.showGameEndMessage();
+                return;
+            }
             char[] inputChars = input.toCharArray();
             int[] matchResults = model.matchInput(inputChars);
             assert matchResults != null : "matchResults is null";
             // 调用view的函数 updateViewWithMatchResults
-            view.updateViewWithMatchResults(matchResults, model.getCurrentGuess());
+            view.updateViewWithMatchResults(matchResults, getCurrentGuess());
         }
 
     }
@@ -112,23 +121,19 @@ public class NumberleController {
                 ops.push(tokens[i]);
             }
         }
-
         // 整个表达式已处理完，按顺序应用剩余操作符
         while (!ops.isEmpty()) {
             values.push(applyOp(ops.pop(), values.pop(), values.pop()));
         }
-
-        // 最终值栈顶即为结果
         return values.pop();
     }
 
     // 判断op2的优先级是否大于或等于op1
     private boolean hasPrecedence(char op1, char op2) {
-        if ((op1 == '*' || op1 == '/') && (op2 == '+' || op2 == '-')) return false;
-        else return true;
+        return (op1 != '*' && op1 != '/') || (op2 != '+' && op2 != '-');
     }
 
-    // 应用操作符
+    // operate
     private int applyOp(char op, int b, int a) {
         switch (op) {
             case '+': return a + b;
