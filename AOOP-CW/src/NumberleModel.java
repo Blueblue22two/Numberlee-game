@@ -63,7 +63,37 @@ public class NumberleModel extends Observable implements INumberleModel {
     }
 
     @Override
+    public boolean isGameOver() {
+        return remainingAttempts <= 0 || gameWon;
+    }
+
+    @Override
+    public boolean isGameWon() {
+        return gameWon;
+    }
+
+    @Override
+    public String getTargetNumber() {
+        return targetNumber;
+    }
+
+    @Override
+    public StringBuilder getCurrentGuess() {
+        return currentGuess;
+    }
+
+    @Override
+    public int getRemainingAttempts() {
+        return remainingAttempts;
+    }
+
+    @Override
+    public void startNewGame() {
+        initialize();
+    }
+
     // Check if the input matches the target character and return an array of the matches
+    @Override
     public int[] matchInput(char[] inputChars){
         assert inputChars != null : "Input characters must not be null";
         int[] result = new int[7];
@@ -99,33 +129,11 @@ public class NumberleModel extends Observable implements INumberleModel {
         return result;
     }
 
+    // set the input as target Number (Testing)
     @Override
-    public boolean isGameOver() {
-        return remainingAttempts <= 0 || gameWon;
+    public void setTargetNumber(String newTarget) {
+        assert newTarget.length()==7 :"The length of the input string should be equal to 7";
+        this.targetNumber = newTarget;
     }
 
-    @Override
-    public boolean isGameWon() {
-        return gameWon;
-    }
-
-    @Override
-    public String getTargetNumber() {
-        return targetNumber;
-    }
-
-    @Override
-    public StringBuilder getCurrentGuess() {
-        return currentGuess;
-    }
-
-    @Override
-    public int getRemainingAttempts() {
-        return remainingAttempts;
-    }
-
-    @Override
-    public void startNewGame() {
-        initialize();
-    }
 }

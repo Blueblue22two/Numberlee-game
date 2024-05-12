@@ -7,11 +7,12 @@ public interface INumberleModel {
 
     void initialize();
     boolean processInput(String input);
-    public int[] matchInput(char[] inputChars);
     boolean isGameOver();
     boolean isGameWon();
     String getTargetNumber();
     StringBuilder getCurrentGuess();
     int getRemainingAttempts();
     void startNewGame();
+    public int[] matchInput(char[] inputChars);
+    public void setTargetNumber(String newTarget);
 }
