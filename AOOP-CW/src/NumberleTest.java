@@ -10,7 +10,7 @@ class NumberleTest {
     @BeforeEach
     void setUp() {
         model = new NumberleModel();
-        model.initialize();  // Preset the target number for consistency in tests
+        model.initialize();
         controller = new NumberleController(model);
         view = new NumberleView(model,controller);
     }

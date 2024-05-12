@@ -17,7 +17,7 @@ public class NumberleModel extends Observable implements INumberleModel {
     public void initialize() {
         try {
             // Load all equations from the file into a list
-            List<String> lines = Files.readAllLines(Paths.get(System.getProperty("user.dir"), "src/equations.txt"), StandardCharsets.UTF_8);
+            List<String> lines = Files.readAllLines(Paths.get(System.getProperty("user.dir"), "equations.txt"), StandardCharsets.UTF_8);
             assert lines.size() == 108 : "File should contain 108 lines, but actually contains " + lines.size() + " lines.";
 
             // Randomly select one equation
