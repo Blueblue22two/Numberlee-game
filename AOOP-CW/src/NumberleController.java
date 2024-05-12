@@ -12,21 +12,16 @@ public class NumberleController {
     }
 
     // Verify that the equation entered by the user is valid
-    private boolean validateInput(String input){
-        assert input != null : "Input string cannot be null";
-        assert input.length() == 7 : "Input string must be exactly 7 characters long";
+    public boolean validateInput(String input){
         if (input.isEmpty()) {
-            System.out.println("Input cannot be empty");
             view.displayError("Input cannot be empty");
             return false;
         }
         if (!input.matches("^[0-9+-/*=()]*$") || input.length() != 7) {
-            System.out.println("The Equation is invalid。");
             view.displayError("The Equation is invalid。");
             return false;
         }
         if (!input.contains("=")) {
-            System.out.println("Equation must include an equals sign.");
             view.displayError("Equation must include an equals sign.");
             return false;
         }

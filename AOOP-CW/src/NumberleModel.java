@@ -24,7 +24,6 @@ public class NumberleModel extends Observable implements INumberleModel {
             Random rand = new Random();
             targetNumber = lines.get(rand.nextInt(lines.size()));
             assert !targetNumber.isEmpty() : "Target equation is empty, unable to select an equation.";
-            System.out.println("Target Number:"+targetNumber);
         } catch (IOException e) {
             // Handle possible I/O errors here
             System.err.println("Error reading from equations.txt file: " + e.getMessage());
@@ -132,7 +131,6 @@ public class NumberleModel extends Observable implements INumberleModel {
     // set the input as target Number (Testing)
     @Override
     public void setTargetNumber(String newTarget) {
-        assert newTarget.length()==7 :"The length of the input string should be equal to 7";
         this.targetNumber = newTarget;
     }
 
