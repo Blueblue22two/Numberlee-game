@@ -23,7 +23,7 @@ public class NumberleModel extends Observable implements INumberleModel {
             // Randomly select one equation
             Random rand = new Random();
             targetNumber = lines.get(rand.nextInt(lines.size()));
-            System.out.println("targetNumber:"+targetNumber);
+            System.out.println("---(Testing) targetNumber:"+targetNumber+"---");
             assert !targetNumber.isEmpty() : "Target equation is empty, unable to select an equation.";
         } catch (IOException e) {
             // Handle possible I/O errors here

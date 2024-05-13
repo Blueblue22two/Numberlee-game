@@ -13,6 +13,6 @@ public interface INumberleModel {
     StringBuilder getCurrentGuess();
     int getRemainingAttempts();
     void startNewGame();
-    public int[] matchInput(char[] inputChars);
-    public void setTargetNumber(String newTarget);
+    int[] matchInput(char[] inputChars);
+    void setTargetNumber(String newTarget);
 }
