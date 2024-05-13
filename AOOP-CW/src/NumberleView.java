@@ -203,6 +203,7 @@ public class NumberleView implements Observer {
             button.setEnabled(true); // Enable button if it was disabled
         }
         clearInput();
+        newGameButton.setVisible(false);  // invisible
         controller.startNewGame();
     }
 

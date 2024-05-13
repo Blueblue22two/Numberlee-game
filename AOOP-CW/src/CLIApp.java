@@ -79,6 +79,7 @@ public class CLIApp {
             int[] matchResults = model.matchInput(inputChars);
             assert matchResults != null : "matchResults is null";
             updateViewWithMatchResults(matchResults,getCurrentGuess());
+            if(isGameOver())showGameEndMessage();
         }
     }
 
